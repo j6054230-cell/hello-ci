@@ -1,24 +1,15 @@
-name: CI
+// 1. Avval ishni qiladigan funksiyani yozamiz
+function add(a, b) {
+    return a + b;
+}
 
-on:
-  push:
-    branches: [main]
+// 2. Uni eksport qilamiz (robot ko'rishi uchun)
+module.exports = { add };
 
-jobs:
-  test-process:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Kodni yuklab olish
-        uses: actions/checkout@v4
-
-      - name: Node.js 20 o'rnatish
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Bog'liqliklarni o'rnatish
-        run: npm ci
-
-      - name: Testlarni ishga tushirish
-        run: npm test
+// 3. VA MANA O'SHA QISIM:
+if (require.main === module) {
+    // Bu faqat 'node src/calculator.js' qilganingda ishlaydi
+    setInterval(() => {
+        console.log("Dastur ishlayapti...");
+    }, 10000);
+}

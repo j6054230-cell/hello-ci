@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  # Bizning dastur
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jamshids-app-service
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+    depends_on:
+      db:
+        condition: service_healthy # DB tayyor bo'lgandagina dastur ishga tushadi
+    networks:
+      - lab-network
+
+  # Ma'lumotlar bazasi
+  db:
+    image: postgres:16-alpine
+    container_name: jamshids-db
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pg-data:/var/lib/postgresql/data # Ma'lumot o'chib ketmasligi uchun
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lab-network
+
+networks:
+  lab-network:
+    driver: bridge
+
+volumes:
+  pg-data:

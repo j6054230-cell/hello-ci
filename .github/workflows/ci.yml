@@ -1,0 +1,16 @@
+name: CI
+steps:
+  - name: Kodni yuklab olish
+    uses: actions/checkout@v4
+
+  - name: Node.js 20 o'rnatish
+    uses: actions/setup-node@v4
+    with:
+      node-version: '20'
+      cache: 'npm'
+
+  - name: Bog'liqliklarni o'rnatish
+    run: npm ci
+
+  - name: Testlarni ishlatish
+    run: npm test

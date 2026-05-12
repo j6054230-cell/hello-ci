@@ -3,12 +3,9 @@ name: CI
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
-  test:
-    name: Test qilish
+  test-process:
     runs-on: ubuntu-latest
     steps:
       - name: Kodni yuklab olish
@@ -23,5 +20,5 @@ jobs:
       - name: Bog'liqliklarni o'rnatish
         run: npm ci
 
-      - name: Testlarni ishlatish
+      - name: Testlarni ishga tushirish
         run: npm test

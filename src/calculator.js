@@ -1,11 +1,12 @@
 function add(a, b) {
-    return a + b;
+  return a + b;
 }
 
-module.exports = { add };
-
-if (require.main === module) {
-    setInterval(() => {
-        console.log("Dastur ishlayapti...");
-    }, 10000);
+function divide(a, b) {
+  if (b === 0) {
+    throw new Error('Nolga bo\'lish mumkin emas');
+  }
+  return a / b;
 }
+
+module.exports = { add, divide };

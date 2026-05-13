@@ -1,0 +1,25 @@
+[run]
+source = src
+omit =
+    */tests/*
+    */migrations/*
+
+[report]
+fail_under = 80
+show_missing = True
+
+[html]
+directory = coverage_html_report
+
+# Natija:
+Name                   Stmts   Miss  Cover   Missing
+------------------------------------------------------
+src/calculator.py         12      0   100%
+src/todo_service.py       28      4    86%   45, 67, 89, 102
+src/user_service.py       19      6    68%   23-28, 45       # Ogohlantirish!
+------------------------------------------------------
+TOTAL                     59      10   83%
+
+FAIL Required test coverage of 80% reached. Total coverage: 83%
+# 83% > 80% - o'tdi!
+

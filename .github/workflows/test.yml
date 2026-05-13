@@ -1,0 +1,78 @@
+name: Test va Sifat Nazorati
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Sifat nazorati
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Paketlarni o'rnatish
+        run: npm ci
+
+      - name: Lint tekshirish
+        run: npm run lint
+
+      - name: Unit testlar
+        run: npm run test:unit
+
+      - name: Integration testlar
+        run: npm run test:integration
+
+      - name: Coverage tekshirish (min 80%)
+        run: npm run test:coverage
+
+      - name: Coverage hisobotni saqlash
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+      - name: Coverage badge yangilash
+        if: github.ref == 'refs/heads/main'
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage/lcov.info
+
+# Test natijasini PR comment sifatida chiqarish:
+
+      - name: Test natijasini hisoblash
+        id: test-results
+        if: always()
+        run: |
+          COVERAGE=$(cat coverage/coverage-summary.json | \
+            node -e "const d=require('/dev/stdin'); \
+            console.log(d.total.lines.pct.toFixed(1))")
+          echo "coverage=${COVERAGE}" >> $GITHUB_OUTPUT
+
+      - name: PR'ga comment yozish
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          header: test-coverage
+          message: |
+            ## Test Natijalari
+
+            | Metrika      | Natija |
+            |--------------|--------|
+            | Test holati  | ${{ steps.test-results.outcome == 'success' && 'PASS' || 'FAIL' }} |
+            | Coverage     | ${{ steps.test-results.outputs.coverage }}% |
+            | Minimal      | 80% |
+
+            [Batafsil hisobot](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+

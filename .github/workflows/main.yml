@@ -1,5 +1,5 @@
-name: CI Quality Gate
-
+- name: Install dependencies
+        run: npm install  # <-- 'ci' o'rniga 'install' yozing
 on:
   push:
     branches: [ main ]
